@@ -960,3 +960,140 @@ Usage: systemsetup -help
 Usage: systemsetup -printCommands
     Display commands.
 ```
+
+## airport
+
+The Airport command-line utility can yield a lot of useful Wi-Fi info.
+
+```text
+$ /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport
+Usage: airport <interface> <verb> <options>
+
+    <interface>
+    If an interface is not specified, airport will use the first AirPort interface on the system.
+
+    <verb is one of the following:
+    prefs    If specified with no key value pairs, displays a subset of AirPort preferences for
+        the specified interface.
+
+        Preferences may be configured using key=value syntax. Keys and possible values are specified below.
+        Boolean settings may be configured using 'YES' and 'NO'.
+
+        DisconnectOnLogout (Boolean)
+        JoinMode (String)
+            Automatic
+            Preferred
+            Ranked
+            Recent
+            Strongest
+        JoinModeFallback (String)
+            Prompt
+            JoinOpen
+            KeepLooking
+            DoNothing
+        RememberRecentNetworks (Boolean)
+        RequireAdmin (Boolean)
+        RequireAdminIBSS (Boolean)
+        RequireAdminNetworkChange (Boolean)
+        RequireAdminPowerToggle (Boolean)
+        WoWEnabled (Boolean)
+
+    logger    Monitor the driver's logging facility.
+
+    sniff    If a channel number is specified, airportd will attempt to configure the interface
+        to use that channel before it begins sniffing 802.11 frames. Captures files are saved to /tmp.
+        Requires super user privileges.
+
+    debug    Enable debug logging. A debug log setting may be enabled by prefixing it with a '+', and disabled
+        by prefixing it with a '-'.
+
+        AirPort Userland Debug Flags
+            DriverDiscovery
+            DriverEvent
+            Info
+            SystemConfiguration
+            UserEvent
+            PreferredNetworks
+            AutoJoin
+            IPC
+            Scan
+            802.1x
+            Assoc
+            Keychain
+            RSNAuth
+            WoW
+            P2P
+            Roam
+            BTCoex
+            AllUserland - Enable/Disable all userland debug flags
+
+        AirPort Driver Common Flags
+            DriverInfo
+            DriverError
+            DriverWPA
+            DriverScan
+            AllDriver - Enable/Disable all driver debug flags
+
+        AirPort Driver Vendor Flags
+            VendorAssoc
+            VendorConnection
+            AllVendor - Enable/Disable all vendor debug flags
+
+        AirPort Global Flags
+            LogFile - Save all AirPort logs to /var/log/wifi.log
+
+<options> is one of the following:
+    No options currently defined.
+
+Examples:
+
+Configuring preferences (requires admin privileges)
+    sudo airport en1 prefs JoinMode=Preferred RememberRecentNetworks=NO RequireAdmin=YES
+
+Sniffing on channel 1:
+    airport en1 sniff 1
+
+
+LEGACY COMMANDS:
+Supported arguments:
+ -c[<arg>] --channel=[<arg>]    Set arbitrary channel on the card
+ -z        --disassociate       Disassociate from any network
+ -I        --getinfo            Print current wireless status, e.g. signal info, BSSID, port type etc.
+ -s[<arg>] --scan=[<arg>]       Perform a wireless broadcast scan.
+                   Will perform a directed scan if the optional <arg> is provided
+ -x        --xml                Print info as XML
+ -P        --psk                Create PSK from specified pass phrase and SSID.
+                   The following additional arguments must be specified with this command:
+                                  --password=<arg>  Specify a WPA password
+                                  --ssid=<arg>      Specify SSID when creating a PSK
+ -h        --help               Show this help
+
+```
+
+Probably my favorite use of this command is getting the current network:
+
+```text
+$ /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I
+     agrCtlRSSI: -40
+     agrExtRSSI: 0
+    agrCtlNoise: -91
+    agrExtNoise: 0
+          state: running
+        op mode: station
+     lastTxRate: 351
+        maxRate: 1300
+lastAssocStatus: 0
+    802.11 auth: open
+      link auth: wpa2-psk
+          BSSID: MY_BSSID
+           SSID: MY_SSID
+            MCS: 7
+        channel: 44,80
+```
+
+Also, you can scan your local Wi-Fi networks by running:
+
+```text
+$ /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -s
+... Networks Here ...
+```
