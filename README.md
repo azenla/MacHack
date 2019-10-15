@@ -364,7 +364,7 @@ optional commands:
 Run the following command to list your peers:
 
 ```text
-$ /us/sbin/otctl status
+$ /usr/sbin/otctl status
 ... Lots of Useful Output ...
 ```
 
