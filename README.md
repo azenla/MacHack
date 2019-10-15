@@ -2,18 +2,36 @@
 
 A list of built-in tools in macOS that you probably didn't know about.
 
-## SafeEjectGPU (GPUs)
+## Table of Contents
+
+- [MacHack](#machack)
+  - [Table of Contents](#table-of-contents)
+  - [Commands](#commands)
+    - [SafeEjectGPU](#safeejectgpu)
+    - [remotectl](#remotectl)
+    - [brctl](#brctl)
+    - [sysadminctl](#sysadminctl)
+    - [ckksctl](#ckksctl)
+    - [otctl](#otctl)
+    - [spctl](#spctl)
+    - [networksetup](#networksetup)
+    - [systemsetup](#systemsetup)
+    - [airport](#airport)
+
+## Commands
+
+### SafeEjectGPU
 
 This is a utility for managing GPUs, especially eGPUs. This is what is behind
 the safe eject functionality of the eGPU in the System UI.
 
 It is useful for:
 
-* Listing GPUs on the system.
-* Determining what applications are using a particular GPU.
-* Ejecting an eGPU safely.
-* Launching an application on a specific GPU.
-* Switching an application from one GPU to another.
+- Listing GPUs on the system.
+- Determining what applications are using a particular GPU.
+- Ejecting an eGPU safely.
+- Launching an application on a specific GPU.
+- Switching an application from one GPU to another.
 
 ```text
 $ /usr/bin/SafeEjectGPU
@@ -74,7 +92,7 @@ gpuid 0x5d0e - AMD Radeon RX 570
                maxTransferRate - 5000000000
 ```
 
-## remotectl (Bridge Chips)
+### remotectl
 
 The Apple T2 security chip (a built-in ARM chip in newer Mac models) communicates with your system with a modified HTTP/2 protocol. There is also a command-line interface for various functions of the chip.
 
@@ -183,7 +201,7 @@ Found localbridge (bridge)
                 com.apple.videoprocessingd.encode.remote
 ```
 
-## brctl
+### brctl
 
 This is a utility related to "CloudDocs", also know as iCloud Drive.
 
@@ -262,7 +280,7 @@ $ brctl quota
 2098962726220 bytes of quota remaining
 ```
 
-## sysadminctl
+### sysadminctl
 
 Basically an all around useful tool for managing users, as well as manage full-disk encryption (FileVault).
 
@@ -295,7 +313,7 @@ $ sudo sysadminctl -filesystem status
 2019-10-13 10:16:41.298 sysadminctl[61797:3404423] Boot volume APFS FDE: YES
 ```
 
-## ckkctl
+### ckksctl
 
 CloudKit controls, probably useful for some advanced users.
 
@@ -322,7 +340,7 @@ optional commands:
   ckmetric                       Push CloudKit metric
 ```
 
-## otctl
+### otctl
 
 This is the Octagon Trust utility. It's a pretty neat view of the underlying trust network being used by your Apple Devices.
 
@@ -368,7 +386,7 @@ $ /usr/sbin/otctl status
 ... Lots of Useful Output ...
 ```
 
-## spctl
+### spctl
 
 This is the System Policy management utility. You can enable and disable Gatekeeper and other code-signing features this way.
 
@@ -407,7 +425,7 @@ $ /usr/sbin/spctl --status
 assessments enabled
 ```
 
-## networksetup
+### networksetup
 
 Network setup is pretty much everything network-related minus some wireless stuff.
 
@@ -807,7 +825,7 @@ Usage: networksetup -printcommands
 Any command that takes a password, will accept - to indicate the password should be read from stdin.
 ```
 
-## systemsetup
+### systemsetup
 
 This utility provides a lot of simpler system setup options.
 
@@ -961,7 +979,7 @@ Usage: systemsetup -printCommands
     Display commands.
 ```
 
-## airport
+### airport
 
 The Airport command-line utility can yield a lot of useful Wi-Fi info.
 
