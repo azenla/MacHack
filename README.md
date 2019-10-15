@@ -7,7 +7,9 @@ A list of built-in tools in macOS that you probably didn't know about.
 - [MacHack](#machack)
   - [Table of Contents](#table-of-contents)
   - [Commands](#commands)
+    - [dot_clean](#dotclean)
     - [SafeEjectGPU](#safeejectgpu)
+    - [sharing](#sharing)
     - [remotectl](#remotectl)
     - [brctl](#brctl)
     - [sysadminctl](#sysadminctl)
@@ -19,6 +21,23 @@ A list of built-in tools in macOS that you probably didn't know about.
     - [airport](#airport)
 
 ## Commands
+
+### dot_clean
+
+This is an extremely useful built-in utility to delete all useless dot files that macOS creates, such as ._MyFile.
+
+Just point it at a folder, and it wipes it free of the cruft!
+
+```text
+$ /usr/sbin/dot_clean
+usage: dot_clean  [-fmnpsv] [--keep=[mostrecent|dotbar|native]] [directory ...]
+```
+
+An example usage of the tool:
+
+```text
+$ /usr/sbin/dot_clean /Volumes/Shared/MyFiles
+```
 
 ### SafeEjectGPU
 
@@ -90,6 +109,36 @@ gpuid 0x5d0e - AMD Radeon RX 570
                location - External
                locationNumber - 4
                maxTransferRate - 5000000000
+```
+
+### sharing
+
+This command gives information about File Sharing. It should look similar to the File Sharing section in the Sharing preference pane.
+
+```bash
+$ /usr/sbin/sharing
+Usage:
+sharing -a <path> [options] : create a sharepoint for directory specified by path <path>
+sharing -e <name> [options] : edit sharepoint named <name>
+sharing -r <name>           : remove sharepoint with name <name>
+sharing -l                  : list existing  sharepoints
+
+options:
+        -A <name> :use share point name <name> for afp.
+        -F <name> :use share point name <name> for ftp.
+        -S <name> :use share point name <name> for smb.
+        -s [<flags>] :enable sharing, restricted by flags if specified;
+           flags = 000,001,010 ...111; 1 = share, 0 = do not share;
+           with digits indicating afp, ftp (no longer supported) and smb in that order;
+           default is 101 if -s is specified with no flags.
+        -g [<flags>] :enable guest access, restricted by flags if specified;
+           flags = 000,001,010 ...111; 1 = enabled, 0 = disabled;
+           with digits indicating afp, ftp (no longer supported) and smb in that order;
+           default 101 if -g is specified with no flags.
+        -i [<flags>] :enable inherit privileges from parent(afp only), restricted by flags if specified;
+           flags = 00,10; 10 = enabled, 00 = disabled;
+           default is 10 if -i is specified with no flags.
+        -n <name> :set record name to use (by default this is the directory name of the shared directory)
 ```
 
 ### remotectl
