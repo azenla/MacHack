@@ -7,7 +7,7 @@ A list of built-in tools in macOS that you probably didn't know about.
 - [MacHack](#machack)
   - [Table of Contents](#table-of-contents)
   - [Commands](#commands)
-    - [dot_clean](#dotclean)
+    - [dot_clean](#dot_clean)
     - [SafeEjectGPU](#safeejectgpu)
     - [sharing](#sharing)
     - [remotectl](#remotectl)
