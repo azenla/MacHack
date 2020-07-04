@@ -7,6 +7,7 @@ A list of built-in tools in macOS that you probably didn't know about.
 - [MacHack](#machack)
   - [Table of Contents](#table-of-contents)
   - [Commands](#commands)
+    - [java_home](#java_home)
     - [dot_clean](#dot_clean)
     - [SafeEjectGPU](#safeejectgpu)
     - [sharing](#sharing)
@@ -19,8 +20,38 @@ A list of built-in tools in macOS that you probably didn't know about.
     - [networksetup](#networksetup)
     - [systemsetup](#systemsetup)
     - [airport](#airport)
+    - [AssetCacheLocatorUtil](#assetcachelocatorutil)
+    - [AssetCacheManagerUtil](#assetcachemanagerutil)
 
 ## Commands
+
+### java_home
+
+This tool queries the available Java Virtual Machines from `/Library/Java/JavaVirtualMachines`.
+
+```text
+$ /usr/libexec/java_home --help
+Usage: java_home [options...]
+    Returns the path to a Java home directory from the current user's settings.
+
+Options:
+    [-v/--version   <version>]       Filter Java versions in the "JVMVersion" form 1.X(+ or *).
+    [-a/--arch      <architecture>]  Filter JVMs matching architecture (i386, x86_64, etc).
+    [-d/--datamodel <datamodel>]     Filter JVMs capable of -d32 or -d64
+    [-t/--task      <task>]          Use the JVM list for a specific task (Applets, WebStart, BundledApp, JNI, or CommandLine)
+    [-F/--failfast]                  Fail when filters return no JVMs, do not continue with default.
+    [   --exec      <command> ...]   Execute the $JAVA_HOME/bin/<command> with the remaining arguments.
+    [-X/--xml]                       Print full JVM list and additional data as XML plist.
+    [-V/--verbose]                   Print full JVM list with architectures.
+    [-h/--help]                      This usage information.
+```
+
+An example usage of this tool:
+
+```text
+$ /usr/libexec/java_home -v 11 -a x86_64
+/Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home
+```
 
 ### dot_clean
 
@@ -1163,4 +1194,78 @@ Also, you can scan your local Wi-Fi networks by running:
 ```text
 $ /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -s
 ... Networks Here ...
+```
+
+### AssetCacheLocatorUtil
+
+This tool fetches the available Content Caches available to your machine, and other Apple devices on the network.
+Content Cache is available in Sharing inside System Preferences and allows you to cache System Updates and iCloud content on local machines for bandwidth reduction.
+
+
+```text
+$ /usr/bin/AssetCacheLocatorUtil
+```
+
+The output from this command is pretty large but it will allow you to diagnose access to content cache.
+
+### AssetCacheManagerUtil
+
+This tool manages the Content Cache service on your machine.
+
+```text
+$ /usr/bin/AssetCacheManagerUtil   
+2020-07-04 01:26:37.394 AssetCacheManagerUtil[2835:949425] Usage: AssetCacheManagerUtil [options] command
+2020-07-04 01:26:37.394 AssetCacheManagerUtil[2835:949425] Options are:
+    -a|--all        show all events
+    -j|--json       print results in JSON
+    -l|--linger     don't exit
+2020-07-04 01:26:37.394 AssetCacheManagerUtil[2835:949425] Commands are:
+    activate
+    deactivate
+    isActivated
+    canActivate
+    flushCache
+    flushPersonalCache
+    flushSharedCache
+    status
+    settings
+    reloadSettings
+    moveCacheTo path
+    absorbCacheFrom path read-only|and-destroy
+```
+
+An example usage of this command is:
+
+```text
+$ /usr/bin/AssetCacheManagerUtil status   
+2020-07-04 01:29:24.546 AssetCacheManagerUtil[3572:955073] Content caching status:
+    Activated: false
+    Active: false
+    CacheDetails: (none)
+    CacheFree: 293.24 GB
+    CacheLimit: unlimited
+    CacheStatus: OK
+    CacheUsed: Zero KB
+    Parents: (none)
+    Peers: (none)
+    PersonalCacheFree: 293.24 GB
+    PersonalCacheLimit: unlimited
+    PersonalCacheUsed: Zero KB
+    Port: 0
+    RegistrationError: NOT_ACTIVATED
+    RegistrationResponseCode: 403
+    RegistrationStatus: -1
+    RestrictedMedia: false
+    ServerGUID: [GUID HERE]
+    StartupStatus: FAILED
+    TetheratorStatus: 0
+    TotalBytesAreSince: 2020-07-03 17:22:37
+    TotalBytesDropped: Zero KB
+    TotalBytesImported: Zero KB
+    TotalBytesReturnedToChildren: Zero KB
+    TotalBytesReturnedToClients: Zero KB
+    TotalBytesReturnedToPeers: Zero KB
+    TotalBytesStoredFromOrigin: Zero KB
+    TotalBytesStoredFromParents: Zero KB
+    TotalBytesStoredFromPeers: Zero KB
 ```
