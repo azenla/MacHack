@@ -43,10 +43,8 @@ Usage: java_home [options...]
     Returns the path to a Java home directory from the current user's settings.
 
 Options:
-    [-v/--version   <version>]       Filter Java versions in the "JVMVersion" form 1.X(+ or *).
-    [-a/--arch      <architecture>]  Filter JVMs matching architecture (i386, x86_64, etc).
-    [-d/--datamodel <datamodel>]     Filter JVMs capable of -d32 or -d64
-    [-t/--task      <task>]          Use the JVM list for a specific task (Applets, WebStart, BundledApp, JNI, or CommandLine)
+    [-v/--version   <version>]       Filter versions (as if JAVA_VERSION had been set in the environment).
+    [-a/--arch      <architecture>]  Filter architecture (as if JAVA_ARCH had been set in the environment).
     [-F/--failfast]                  Fail when filters return no JVMs, do not continue with default.
     [   --exec      <command> ...]   Execute the $JAVA_HOME/bin/<command> with the remaining arguments.
     [-X/--xml]                       Print full JVM list and additional data as XML plist.
@@ -129,24 +127,24 @@ Example of the `gpus` command:
 ```text
 $ /usr/bin/SafeEjectGPU gpus
 gpus
-2019-10-13 10:04:58.676 SafeEjectGPU[53035:3374543] Device PreExisted [000000010000778d] AMD Radeon RX 570
-2019-10-13 10:04:58.676 SafeEjectGPU[53035:3374543] Device PreExisted [000000010000086b] AMD Radeon Pro 560X
-2019-10-13 10:04:58.676 SafeEjectGPU[53035:3374543] Device PreExisted [000000010000081a] Intel(R) UHD Graphics 630
+2020-12-27 15:30:35.949 SafeEjectGPU[55941:9041424] Device PreExisted [00000001000008b2] AMD Radeon RX 570
+2020-12-27 15:30:35.949 SafeEjectGPU[55941:9041424] Device PreExisted [00000001000008b5] AMD Radeon Pro 560X
+2020-12-27 15:30:35.949 SafeEjectGPU[55941:9041424] Device PreExisted [0000000100000876] Intel(R) UHD Graphics 630
 gpuid 0x56ce - Intel® UHD Graphics 630
-               registryID=0x000000010000081a integrated
+               registryID=0x0000000100000876 integrated
                location - BuiltIn
                locationNumber - 0
                maxTransferRate - 0
 gpuid 0x9f05 - AMD Radeon Pro 560X
-               registryID=0x000000010000086b discrete
+               registryID=0x00000001000008b5 discrete
                location - BuiltIn
                locationNumber - 1
                maxTransferRate - 0
 gpuid 0x5d0e - AMD Radeon RX 570
-               registryID=0x000000010000778d removable
-               Razer Core X - enclosureRegistryID=0x000000010000776d
+               registryID=0x00000001000008b2 removable
+               Razer Core X - enclosureRegistryID=0x0000000100000472
                location - External
-               locationNumber - 4
+               locationNumber - 1
                maxTransferRate - 5000000000
 ```
 
@@ -160,29 +158,31 @@ Usage:
 sharing -a <path> [options] : create a sharepoint for directory specified by path <path>
 sharing -e <name> [options] : edit sharepoint named <name>
 sharing -r <name>           : remove sharepoint with name <name>
-sharing -l                  : list existing  sharepoints
+sharing -l [-f json]        : list existing sharepoints
 
 options:
-        -A <name> :use share point name <name> for afp.
-        -F <name> :use share point name <name> for ftp.
+        -A <name> :use share point name <name> for afp. Obsolete but left in for backwards compatibility.
+        -F <name> :use share point name <name> for ftp. Obsolete but left in for backwards compatibility.
         -S <name> :use share point name <name> for smb.
         -s [<flags>] :enable sharing, restricted by flags if specified;
            flags = 000,001,010 ...111; 1 = share, 0 = do not share;
-           with digits indicating afp, ftp (no longer supported) and smb in that order;
-           default is 101 if -s is specified with no flags.
+           with digits indicating afp (no longer supported), ftp (no longer supported) and smb in that order;
+           default is 001 if -s is specified with no flags.
         -g [<flags>] :enable guest access, restricted by flags if specified;
            flags = 000,001,010 ...111; 1 = enabled, 0 = disabled;
-           with digits indicating afp, ftp (no longer supported) and smb in that order;
-           default 101 if -g is specified with no flags.
-        -i [<flags>] :enable inherit privileges from parent(afp only), restricted by flags if specified;
-           flags = 00,10; 10 = enabled, 00 = disabled;
-           default is 10 if -i is specified with no flags.
+           with digits indicating afp (no longer supported), ftp (no longer supported) and smb in that order;
+           default 001 if -g is specified with no flags.
+        -i [<flags>] :enable inherit privileges from parent (afp only). Obsolete but left in for backwards compatibility.
         -n <name> :set record name to use (by default this is the directory name of the shared directory)
+       -R <0/1> :make share read only for smb. 1 is enable, 0 is disable.
+       -E <0/1> :make share encrypted for smb v3 and later. 1 is enable, 0 is disable.
+       -f <format> :when listing shares, outputs in specified format. Formats supported: json
 ```
 
 ### remotectl
 
-The Apple T2 security chip (a built-in ARM chip in newer Mac models) communicates with your system with a modified HTTP/2 protocol. There is also a command-line interface for various functions of the chip.
+The Apple T2 security chip (a built-in ARM chip in newer Intel Mac models) communicates with your system with a modified HTTP/2 protocol. There is also a command-line interface for various functions of the chip.
+Note that this chip is merged with the Apple Silicon chips, and remotectl is no longer used on Apple Silicon Macs.
 
 ```text
 $ /usr/libexec/remotectl
@@ -207,86 +207,90 @@ Example of the `list` command:
 
 ```text
 $ /usr/libexec/remotectl list
-MY_UUID_HERE localbridge      iBridge2,3   J680AP   4.0 (17P572/17.16.10572.0.0,0) -
+MY_UUID localbridge    iBridge2,3   J680AP   5.1 (18P3030/18.16.13030.0.0,0) -
 ```
 
 Example of the `show` command:
 
 ```text
-$ /usr/libexec/remotectl show MY_UUID_HERE
+$ /usr/libexec/remotectl show MY_UUID
 Found localbridge (bridge)
-        State: connected (connectable)
-        UUID: MY_UUID_HERE
-        Product Type: iBridge2,3
-        OS Build: 4.0 (17P572)
-        Messaging Protocol Version: 1
-        Heartbeat:
-                Last successful heartbeat sent 18.730s ago, received 18.727s ago (took 0.002s)
-                6147 heartbeats sent, 0 received
-        Properties: {
-                AppleInternal => false
-                ChipID => 32786
-                EffectiveProductionStatusSEP => true
-                HWModel => J680AP
-                HasSEP => true
-                LocationID => 2148532224
-                RegionInfo => LL/A
-                EffectiveSecurityModeAp => true
-                FDRSealingStatus => true
-                SigningFuse => true
-                BuildVersion => 17P572
-                OSVersion => 4.0
-                BridgeVersion => 17.16.10572.0.0,0
-                SensitivePropertiesVisible => true
-                ProductType => iBridge2,3
-                BoardRevision => 1
-                Image4CryptoHashMethod => sha2-384
-                SerialNumber => MY_SERIAL_NUMBER_HERE
-                BootSessionUUID => MY_BOOT_UUID_HERE
-                BoardId => 11
-                DeviceColor => black
-                EffectiveProductionStatusAp => true
-                EffectiveSecurityModeSEP => true
-                UniqueChipID => MY_UNIQUE_CHIP_ID
-                UniqueDeviceID => MY_UNIQUE_DEVICE_ID
-                RemoteXPCVersionFlags => 72057594037927942
-                CertificateSecurityMode => true
-                CertificateProductionStatus => true
-                DeviceEnclosureColor => black
-                ModelNumber => Z0V16LL/A
-                RegionCode => LL
-                SecurityDomain => 1
-                InterfaceIndex => 4
-                HardwarePlatform => t8012
-                Image4Supported => true
-        }
-        Services:
-                com.apple.powerchime.remote
-                com.apple.mobile.storage_mounter_proxy.bridge
-                com.apple.lskdd
-                com.apple.eos.BiometricKit
-                com.apple.aveservice
-                com.apple.icloud.findmydeviced.bridge
-                com.apple.private.avvc.xpc.remote
-                com.apple.nfcd.relay.control
-                com.apple.corespeech.xpc.remote.control
-                com.apple.mobileactivationd.bridge
-                com.apple.sysdiagnose.stackshot.remote
-                com.apple.multiverse.remote.bridgetime
-                com.apple.eos.LASecureIO
-                com.apple.xpc.remote.multiboot
-                com.apple.nfcd.relay.uart
-                com.apple.xpc.remote.mobile_obliteration
-                com.apple.corespeech.xpc.remote.record
-                com.apple.sysdiagnose.remote
-                com.apple.mobile.storage_mounter_proxy.bridge.macOS
-                com.apple.bridgeOSUpdated
-                com.apple.osanalytics.logTransfer
-                com.apple.internal.xpc.remote.kext_audit
-                com.apple.recoverylogd.bridge
-                com.apple.corecaptured.remoteservice
-                com.apple.logd.remote-daemon
-                com.apple.videoprocessingd.encode.remote
+    State: connected (connectable)
+    UUID: MY_UUID
+    Product Type: iBridge2,3
+    OS Build: 5.1 (18P3030)
+    Messaging Protocol Version: 2
+    Heartbeat:
+        Last successful heartbeat sent 8.825s ago, received 8.822s ago (took 0.003s)
+        64402 heartbeats sent, 0 received
+    Properties: {
+        AppleInternal => false
+        CPUArchitecture => arm64
+        ChipID => 32786
+        EffectiveProductionStatusSEP => true
+        HWModel => J680AP
+        HasSEP => true
+        LocationID => MY_LOCATION_ID
+        IsUIBuild => true
+        RegionInfo => LL/A
+        DeviceSupportsLockdown => false
+        EffectiveSecurityModeAp => true
+        SigningFuse => true
+        BuildVersion => 18P3030
+        OSVersion => 5.1
+        BridgeVersion => 18.16.13030.0.0,0
+        SensitivePropertiesVisible => true
+        BoardRevision => 1
+        Image4CryptoHashMethod => sha2-384
+        ProductType => iBridge2,3
+        SerialNumber => MY_SERIAL_NUMBER
+        BootSessionUUID => MY_BOOT_SESSION_ID
+        BoardId => 11
+        DeviceColor => black
+        EffectiveProductionStatusAp => true
+        EffectiveSecurityModeSEP => true
+        UniqueChipID => MY_UNIQUE_CHIP_ID
+        UniqueDeviceID => MY_UNIQUE_DEVICE_ID
+        RemoteXPCVersionFlags => MY_XPC_VERSION_FLAGS
+        CertificateProductionStatus => true
+        CertificateSecurityMode => true
+        DeviceEnclosureColor => black
+        ModelNumber => Z0V16LL/A
+        RegionCode => LL
+        SecurityDomain => 1
+        OSInstallEnvironment => false
+        InterfaceIndex => 4
+        HardwarePlatform => t8012
+        Image4Supported => true
+    }
+    Services:
+        com.apple.nfcd.relay.uart
+        com.apple.bridgeOSUpdated
+        com.apple.videoprocessingd.encode.remote
+        com.apple.corespeech.xpc.remote.record
+        com.apple.bootpolicyd.remote.internal
+        com.apple.icloud.findmydeviced.bridge
+        com.apple.xpc.remote.mobile_obliteration
+        com.apple.bootpolicyd.remote
+        com.apple.eos.BiometricKit
+        com.apple.osanalytics.logTransfer
+        com.apple.internal.xpc.remote.kext_audit
+        com.apple.xpc.remote.multiboot
+        com.apple.powerchime.remote
+        com.apple.aveservice
+        com.apple.recoverylogd.bridge
+        com.apple.sysdiagnose.stackshot.remote
+        com.apple.corespeech.xpc.remote.control
+        com.apple.RestoreRemoteServices.restoreserviced
+        com.apple.corecaptured.remoteservice
+        com.apple.nfcd.relay.control
+        com.apple.mobileactivationd.bridge
+        com.apple.sysdiagnose.remote
+        com.apple.CoreKDL.remoteXPC
+        com.apple.eos.LASecureIO
+        com.apple.multiverse.remote.bridgetime
+        com.apple.lskdd
+        com.apple.private.avvc.xpc.remote
 ```
 
 ### brctl
@@ -294,7 +298,7 @@ Found localbridge (bridge)
 This is a utility related to "CloudDocs", also know as iCloud Drive.
 
 ```text
-$ brctl
+$ /usr/bin/brctl
 Usage: brctl <command> [command-options and arguments]
 
     -h,--help            show this help
@@ -326,7 +330,9 @@ log [options] [<command>]
     -E,--end="YYYY-MM-DD HH:MM:SS"   Stop log dump after a specified date
     -b                               Only show CloudDocs logs
     -f                               Only show FileProvider related logs
+    -F                               Only show FruitBasket related logs
     -g                               Only show Genstore related logs
+    -i                               Only show SQL and CloudDocs logs
     -z,--local-timezone              Display timestamps within local timezone
 
 dump [options] [<container>]
@@ -364,7 +370,7 @@ monitor [options] [<container> ...]
 A pretty cool command here is a utility to get the quota left on your iCloud Drive:
 
 ```text
-$ brctl quota
+$ /usr/bin/brctl quota
 2098962726220 bytes of quota remaining
 ```
 
@@ -375,22 +381,24 @@ Basically an all around useful tool for managing users, as well as manage full-d
 ```text
 $ /usr/sbin/sysadminctl
 Usage: sysadminctl
-        -deleteUser <user name> [-secure || -keepHome] (interactive || -adminUser <administrator user name> -adminPassword <administrator password>)
-        -newPassword <new password> -oldPassword <old password> [-passwordHint <password hint>]
-        -resetPasswordFor <local user name> -newPassword <new password> [-passwordHint <password hint>] (interactive] || -adminUser <administrator user name> -adminPassword <administrator password>)
-        -addUser <user name> [-fullName <full name>] [-UID <user ID>] [-shell <path to shell>] [-password <user password>] [-hint <user hint>] [-home <full path to home>] [-admin] [-picture <full path to user image>] (interactive] || -adminUser <administrator user name> -adminPassword <administrator password>)
-        -secureTokenStatus <user name>
-        -secureTokenOn <user name> -password <password> (interactive || -adminUser <administrator user name> -adminPassword <administrator password>)
-        -secureTokenOff <user name> -password <password> (interactive || -adminUser <administrator user name> -adminPassword <administrator password>)
-        -guestAccount <on || off || status>
-        -afpGuestAccess <on || off || status>
-        -smbGuestAccess <on || off || status>
-        -automaticTime <on || off || status>
-        -filesystem status
-        -screenLock <immediate || off> -password <password>
+    -deleteUser <user name> [-secure || -keepHome] (interactive || -adminUser <administrator user name> -adminPassword <administrator password>)
+    -newPassword <new password> -oldPassword <old password> [-passwordHint <password hint>]
+    -resetPasswordFor <local user name> -newPassword <new password> [-passwordHint <password hint>] (interactive] || -adminUser <administrator user name> -adminPassword <administrator password>)
+    -addUser <user name> [-fullName <full name>] [-UID <user ID>] [-GID <group ID>] [-shell <path to shell>] [-password <user password>] [-hint <user hint>] [-home <full path to home>] [-admin] [-roleAccount] [-picture <full path to user image>] (interactive] || -adminUser <administrator user name> -adminPassword <administrator password>)
+    -secureTokenStatus <user name>
+    -secureTokenOn <user name> -password <password> (interactive || -adminUser <administrator user name> -adminPassword <administrator password>)
+    -secureTokenOff <user name> -password <password> (interactive || -adminUser <administrator user name> -adminPassword <administrator password>)
+    -guestAccount <on || off || status>
+    -afpGuestAccess <on || off || status>
+    -smbGuestAccess <on || off || status>
+    -automaticTime <on || off || status>
+    -filesystem status
+    -screenLock <status || immediate || off || seconds> -password <password>
 
 Pass '-' instead of password in commands above to request prompt.
 '-adminPassword' used mostly for scripted operation. Use '-' or 'interactive' to get the authentication string interactively. This preferred for security reasons
+
+    *Role accounts require name starting with _ and UID in 200-400 range.
 ```
 
 A pretty useful command in this tool is to check if FileVault is enabled:
@@ -407,7 +415,7 @@ CloudKit controls, probably useful for some advanced users.
 
 ```text
 $ /usr/sbin/ckksctl
-usage: ckksctl [-p] [-j] [-v arg] [status] [fetch] [push] [resync] [reset] [reset-cloudkit] [ckmetric]
+usage: ckksctl [-p] [-j] [-s] [-v arg] [status] [fetch] [push] [resync] [reset] [reset-cloudkit] [ckmetric]
 
 Control and report on CKKS
 
@@ -416,6 +424,7 @@ positional arguments:
 optional arguments:
   -p, --perfcounters             Print CKKS performance counters
   -j, --json                     Output in JSON format
+  -s, --short                    Output a short format
   -v arg, --view arg             Operate on a single view
 
 optional commands:
@@ -434,7 +443,7 @@ This is the Octagon Trust utility. It's a pretty neat view of the underlying tru
 
 ```text
 $ /usr/sbin/otctl
-usage: otctl [-s arg] [-e arg] [-r arg] [-j] [--altDSID arg] [--entropy arg] [--container arg] [--radar arg] [start] [sign-in] [sign-out] [status] [resetoctagon] [allBottles] [recover] [depart] [er-trigger] [er-status] [er-reset] [er-store] [health] [taptoradar]
+usage: otctl [-s arg] [-e arg] [-r arg] [-j] [-i arg] [-E] [-P] [--altDSID arg] [--entropy arg] [--appleID arg] [--dsid arg] [--container arg] [--radar arg] [start] [sign-in] [sign-out] [status] [resetoctagon] [resetProtectedData] [user-controllable-views] [allBottles] [recover] [depart] [er-trigger] [er-status] [er-reset] [er-store] [health] [ckks-policy] [taptoradar] [fetchEscrowRecords] [fetchAllEscrowRecords] [recover-record] [recover-record-silent]
 
 Control and report on Octagon Trust
 
@@ -445,8 +454,13 @@ optional arguments:
   -e arg, --bottleID arg         bottle record id
   -r arg, --skipRateLimiting arg  enter values YES or NO, option defaults to NO, This gives you the opportunity to skip the rate limiting check when performing the cuttlefish health check
   -j, --json                     Output in JSON
+  -i arg, --recordID arg         recordID
+  -E, --enable                   Enable something (pair with a modification command)
+  -P, --pause                    Pause something (pair with a modification command)
   --altDSID arg                   altDSID (for sign-in/out)
   --entropy arg                   escrowed entropy in JSON
+  --appleID arg                   AppleID
+  --dsid arg                      DSID
   --container arg                 CloudKit container name
   --radar arg                     Radar number
 
@@ -456,6 +470,8 @@ optional commands:
   sign-out                       Inform Cuttlefish container of sign out
   status                         Report Octagon status
   resetoctagon                   Reset and establish new Octagon trust
+  resetProtectedData             Reset ProtectedData
+  user-controllable-views        Modify or view user-controllable views status (If one of --enable or --pause is passed, will modify status)
   allBottles                     Fetch all viable bottles
   recover                        Recover using this bottle
   depart                         Depart from Octagon Trust
@@ -464,7 +480,12 @@ optional commands:
   er-reset                       Delete all Escrow Request requests
   er-store                       Store any pending Escrow Request prerecords
   health                         Check Octagon Health status
+  ckks-policy                    Trigger a refetch of the CKKS policy
   taptoradar                     Trigger a TapToRadar
+  fetchEscrowRecords             Fetch Escrow Records
+  fetchAllEscrowRecords          Fetch All Escrow Records
+  recover-record                 Recover record
+  recover-record-silent          Silent record recovery
 ```
 
 Run the following command to list your peers:
@@ -845,62 +866,6 @@ Usage: networksetup -deletelocation <location name>
 Usage: networksetup -switchtolocation <location name>
     Make the specified location the current location.
 
-Usage: networksetup -listalluserprofiles
-    Display the names of all of the user profiles.
-
-Usage: networksetup -listloginprofiles <service name>
-    Display the names of the loginwindow profiles for the specified service.
-
-Usage: networksetup -enablesystemprofile <service name> <on off>
-    Enables or disables the system profile for the specified service.
-
-Usage: networksetup -enableloginprofile <service name> <profile name> <on off>
-    Enables or disables the specified loginwindow profile for the specified service.
-
-Usage: networksetup -enableuserprofile <profile name> <on off>
-    Enables or disables the specified user profile.
-
-Usage: networksetup -import8021xProfiles <service name> <file path>
-    Imports the 802.1x profiles for the specified service.
-
-Usage: networksetup -export8021xProfiles <service name> <file path> <include keychain items: yes no>
-    Exports all of the profiles for the specified service.
-    If the last parameter is yes, it will include the items from the keychain.
-
-Usage: networksetup -export8021xUserProfiles <file path> <include keychain items: yes no>
-    Exports only the user profiles.
-
-    If the last parameter is yes, it will include the items from the keychain.
-
-Usage: networksetup -export8021xLoginProfiles <service name> <file path> <include keychain items: yes no>
-    Exports only the loginwindow profiles for the specified service.
-
-    If the last parameter is yes, it will include the items from the keychain.
-
-Usage: networksetup -export8021xSystemProfile <service name> <file path> <include keychain items: yes no>
-    Exports only the system profile for the specified service.
-
-    If the last parameter is yes, it will include the items from the keychain.
-
-Usage: networksetup -settlsidentityonsystemprofile <service name> <file path> <passphrase>
-    Sets the TLS identity on the system profile for the specified service.
-
-    The identity must be a pkcs12 file.
-
-Usage: networksetup -settlsidentityonuserprofile <profile name> <file path> <passphrase>
-    Sets the TLS identity on the specified user profile.
-
-    The identity must be a pkcs12 file.
-
-Usage: networksetup -deletesystemprofile <service name>
-    Deletes the system profile for the specified service.
-
-Usage: networksetup -deleteloginprofile <service name> <profile name>
-    Deletes the specified loginwindow profile for the specified service.
-
-Usage: networksetup -deleteuserprofile <profile name>
-    Deletes the specified user profile.
-
 Usage: networksetup -version
     Display version of networksetup tool.
 
@@ -911,6 +876,8 @@ Usage: networksetup -printcommands
     Displays a quick listing of commands (without explanations).
 
 Any command that takes a password, will accept - to indicate the password should be read from stdin.
+
+The networksetup tool requires at least admin privileges to change network settings. If the "Require an administrator password to access system-wide preferences" option is selected in System Preferences > Security & Privacy, then root privileges are required to change network settings.
 ```
 
 ### systemsetup
@@ -1102,6 +1069,7 @@ Usage: airport <interface> <verb> <options>
         RequireAdminIBSS (Boolean)
         RequireAdminNetworkChange (Boolean)
         RequireAdminPowerToggle (Boolean)
+        AllowLegacyNetworks (Boolean)
         WoWEnabled (Boolean)
 
     logger    Monitor the driver's logging facility.
@@ -1173,7 +1141,6 @@ Supported arguments:
                                   --password=<arg>  Specify a WPA password
                                   --ssid=<arg>      Specify SSID when creating a PSK
  -h        --help               Show this help
-
 ```
 
 Probably my favorite use of this command is getting the current network:
@@ -1211,7 +1178,6 @@ Content Cache is available in Sharing inside System Preferences and allows you t
 
 ```text
 $ /usr/bin/AssetCacheLocatorUtil
-kendfinger@KenMac MacHack % /usr/bin/AssetCacheLocatorUtil
 2020-12-26 20:35:24.351 AssetCacheLocatorUtil[39485:7741115] AssetCacheLocatorUtil version 116, framework version 116
 2020-12-26 20:35:24.351 AssetCacheLocatorUtil[39485:7741115] Determining public IP address...
 2020-12-26 20:35:24.494 AssetCacheLocatorUtil[39485:7741115] This computer's public IP address is 8.30.97.117.
@@ -1315,7 +1281,7 @@ Asset Audience: c80fd46d-7cc7-487e-993c-3876697879dc
 kmutil is a tool for managing Kernel Extensions.
 
 ```text
-$ kmutil
+$ /usr/bin/kmutil
 OVERVIEW: kmutil: KernelManagement Utility (KernelManagement_executables-102.60.20)
 
 USAGE: kmutil <subcommand>
@@ -1345,7 +1311,7 @@ SUBCOMMANDS:
 An example of using kmutil is to list loaded kexts:
 
 ```text
-$ kmutil showloaded
+$ /usr/bin/kmutil showloaded
 No variant specified, falling back to release
 Index Refs Address            Size       Wired      Name (Version) UUID <Linked Against>
     1  139 0                  0          0          com.apple.kpi.bsd (20.2.0) 82E2050C-5936-3D24-AD3B-EC4EC5C09E11 <>
@@ -1359,7 +1325,7 @@ Index Refs Address            Size       Wired      Name (Version) UUID <Linked 
 profiles allows you to manage and inspect macOS profiles. This is most commonly used for MDM.
 
 ```text
-$ profiles help
+$ /usr/bin/profiles help
 profiles allows you access configuration or application provisioning profiles on macOS.
     Use 'profiles help' for this help section, or use the man page for expanded instructions.
     Basic usage is in the form:  'profiles <command verb> [<options and parameters>]'
@@ -1393,7 +1359,7 @@ profiles allows you access configuration or application provisioning profiles on
 An example usage of profiles is viewing the status of profile enrollment:
 
 ```text
-$ profiles status -type enrollment
+$ /usr/bin/profiles status -type enrollment
 Enrolled via DEP: No
 MDM enrollment: No
 ```
@@ -1403,7 +1369,7 @@ MDM enrollment: No
 bputil is a tool for managing Boot Policy. This tool is only available on Apple Silicon. If you run this tool on x86_64, it will output: `bputil is not yet supported on this platform.`
 
 ```text
-$ bputil
+$ /usr/bin/bputil
 
 This utility is not meant for normal users or even sysadmins.
 It provides unabstracted access to capabilities which are normally handled for the user automatically when changing the security policy through GUIs such as Startup Disk in macOS Recovery.
@@ -1464,7 +1430,7 @@ bputil v0.1.3 - a tool to modify boot policies
 nscurl is similar to curl but using macOS APIs.
 
 ```text
-$ nscurl -h
+$ /usr/bin/nscurl -h
 Usage: nscurl [options...] <URL>
 Options:
    -h     --help                                 Display help message
@@ -1559,7 +1525,7 @@ Options:
 An example of using nscurl is fetching your external IP from ipify.org:
 
 ```text
-$ nscurl 'https://api.ipify.org?format=json'
+$ /usr/bin/nscurl 'https://api.ipify.org?format=json'
 {"ip":"10.25.0.1"}
 ```
 
@@ -1568,7 +1534,7 @@ $ nscurl 'https://api.ipify.org?format=json'
 taskinfo is a tool for viewing detailed information about a process.
 
 ```text
-$ taskinfo -h
+$ /usr/bin/taskinfo -h
 usage:
     taskinfo [-h|--help] [--threads] [--dq] [--boosts] [process-name|pid]
 ```
@@ -1576,7 +1542,7 @@ usage:
 An example of using taskinfo is fetching information about the taskinfo process itself.
 
 ```text
-$ sudo taskinfo taskinfo
+$ sudo /usr/bin/taskinfo taskinfo
 process: "taskinfo" [76355] [unique ID: 773167]
 architecture: arm64e
 coalition (type 0) ID: 30994
@@ -1625,7 +1591,7 @@ adaptive daemon: NO (boosted: NO)
 taskpolicy can be used to adjust certain policies for running programs, and can additionally be used for running programs with a particular policy.
 
 ```$text
-$ taskpolicy
+$ /usr/sbin/taskpolicy
 Usage: taskpolicy [-x|-X] [-d <policy>] [-g policy] [-c clamp] [-b] [-t <tier>]
                   [-l <tier>] [-a] <program> [<pargs> [...]]
        taskpolicy [-b|-B] [-t <tier>] [-l <tier>] -p pid
@@ -1634,7 +1600,7 @@ Usage: taskpolicy [-x|-X] [-d <policy>] [-g policy] [-c clamp] [-b] [-t <tier>]
 An example of using taskpolicy is clamping a command to a particular task QoS:
 
 ```text
-$ taskpolicy -c background sw_vers
+$ /usr/sbin/taskpolicy -c background sw_vers
 ProductName:    macOS
 ProductVersion: 11.0
 BuildVersion:   20A2411
@@ -1645,7 +1611,7 @@ BuildVersion:   20A2411
 asr stands for Apple Software Restore. It is used for copying volume content.
 
 ```text
-$ asr
+$ /usr/sbin/asr
 Usage: asr <verb> <options>
   <verb> is one of the following:
     asr help | version
