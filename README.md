@@ -29,6 +29,7 @@ A list of built-in tools in macOS that you probably didn't know about.
     - [nscurl](#nscurl)
     - [taskinfo](#taskinfo)
     - [taskpolicy](#taskpolicy)
+    - [asr](#asr)
 
 ## Commands
 
@@ -1638,3 +1639,21 @@ ProductName:    macOS
 ProductVersion: 11.0
 BuildVersion:   20A2411
 ```
+
+### asr
+
+asr stands for Apple Software Restore. It is used for copying volume content.
+
+```text
+$ asr
+Usage: asr <verb> <options>
+  <verb> is one of the following:
+    asr help | version
+    asr restore --source <source> --target <target> [<options>]
+    asr restore --source asr://<host>/ --file <file> [<options>]
+    asr server  --source <source> --config <plist> [<options>]
+    asr imagescan --source <source> [--filechecksum] [--nostream]
+    asr info --source <source> [--plist]
+```
+
+There is a [great WWDC talk](https://developer.apple.com/videos/play/wwdc2019/710/) which dives into ASR around the eleven minute mark.
