@@ -22,6 +22,7 @@ A list of built-in tools in macOS that you probably didn't know about.
     - [airport](#airport)
     - [AssetCacheLocatorUtil](#assetcachelocatorutil)
     - [AssetCacheManagerUtil](#assetcachemanagerutil)
+    - [seedutil](#seedutil)
 
 ## Commands
 
@@ -1201,9 +1202,14 @@ $ /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resour
 This tool fetches the available Content Caches available to your machine, and other Apple devices on the network.
 Content Cache is available in Sharing inside System Preferences and allows you to cache System Updates and iCloud content on local machines for bandwidth reduction.
 
-
 ```text
 $ /usr/bin/AssetCacheLocatorUtil
+kendfinger@KenMac MacHack % /usr/bin/AssetCacheLocatorUtil
+2020-12-26 20:35:24.351 AssetCacheLocatorUtil[39485:7741115] AssetCacheLocatorUtil version 116, framework version 116
+2020-12-26 20:35:24.351 AssetCacheLocatorUtil[39485:7741115] Determining public IP address...
+2020-12-26 20:35:24.494 AssetCacheLocatorUtil[39485:7741115] This computer's public IP address is 8.30.97.117.
+2020-12-26 20:35:24.494 AssetCacheLocatorUtil[39485:7741115] --- Information for system services:
+.... More Output
 ```
 
 The output from this command is pretty large but it will allow you to diagnose access to content cache.
@@ -1268,4 +1274,31 @@ $ /usr/bin/AssetCacheManagerUtil status
     TotalBytesStoredFromOrigin: Zero KB
     TotalBytesStoredFromParents: Zero KB
     TotalBytesStoredFromPeers: Zero KB
+```
+
+### seedutil
+
+seedutil allows you to enroll and un-enroll from AppleSeed programs, such as Public Betas.
+
+```text
+$ sudo /System/Library/PrivateFrameworks/Seeding.framework/Resources/seedutil
+usage: seedutil enroll SEED_PROGRAM
+       seedutil unenroll
+       seedutil current
+       seedutil migrate OLD_VERSION NEW_VERSION
+       seedutil fixup
+```
+
+An example usage of this command is:
+
+```text
+$ sudo /System/Library/PrivateFrameworks/Seeding.framework/Resources/seedutil current
+Currently enrolled in: (null)
+
+Program: 0
+Build is seed: NO
+CatalogURL: (null)
+NSShowFeedbackMenu: NO
+DisableSeedOptOut: NO
+Asset Audience: c80fd46d-7cc7-487e-993c-3876697879dc
 ```
