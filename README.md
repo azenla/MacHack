@@ -24,7 +24,7 @@ A list of built-in tools in macOS that you probably didn't know about.
     - [AssetCacheManagerUtil](#assetcachemanagerutil)
     - [seedutil](#seedutil)
     - [kmutil](#kmutil)
-    - [profiles][#profiles]
+    - [profiles](#profiles)
     - [bputil](#bputil)
 
 ## Commands
