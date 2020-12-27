@@ -24,7 +24,8 @@ A list of built-in tools in macOS that you probably didn't know about.
     - [AssetCacheManagerUtil](#assetcachemanagerutil)
     - [seedutil](#seedutil)
     - [kmutil](#kmutil)
-    - [profiles][#]
+    - [profiles][#profiles]
+    - [bputil](#bputil)
 
 ## Commands
 
@@ -1391,4 +1392,65 @@ An example usage of profiles is viewing the status of profile enrollment:
 $ profiles status -type enrollment
 Enrolled via DEP: No
 MDM enrollment: No
+```
+
+### bputil
+
+bputil is a tool for managing Boot Policy. This tool is only available on Apple Silicon. If you run this tool on x86_64, it will output: `bputil is not yet supported on this platform.`
+
+```text
+$ bputil
+
+This utility is not meant for normal users or even sysadmins.
+It provides unabstracted access to capabilities which are normally handled for the user automatically when changing the security policy through GUIs such as Startup Disk in macOS Recovery.
+It is possible to make your system security much weaker and therefore easier to compromise using this tool.
+This tool is not to be used in production environments.
+It is possible to render your system unbootable with this tool.
+It should only be used to understand how the security of Apple Silicon Macs works.
+Use at your own risk!
+
+bputil v0.1.3 - a tool to modify boot policies
+        bputil <optional arguments> ...
+
+    Optional arguments:
+    -u, --username <username>
+        Used to specify the username for a user with access to the signing key to authenticate the change
+        If this is specified, the below password option is required too
+        If this is not specified, an interactive prompt will request the username
+    -p, --password <password>
+        Used to specify the password for a user with access to the signing key to authenticate the change
+        If this is specified, the above username option is required too
+        If this is not specified, an interactive prompt will request the password
+    -v, --vuid <AABBCCDD-EEFF-0011-2233-445566778899>
+        Set the Volume Group UUID value
+        If no option is specified, the default value of Volume Group UUID will be set to the APFS volume group UUID of the running OS
+        Volume Group UUID for a given OS can be found with 'diskutil apfs listVolumeGroups'
+    -l, --debug-logging
+        Enables verbose logging to assist in debugging any issues associated with changing the policy
+    -d, --display-policy
+        Display the local policy. If the system has multiple bootable volumes, an interactive prompt will ask you to specify a volume
+    -f, --full-security
+        Changes security mode to Full Security. This option is mutually exclusive with all options below which cause security downgrades
+    -g, --reduced-security
+        Changes security mode to Reduced Security
+        Passing this option will explicitly recreate the LocalPolicy, only the options specified via this tool will exist in the output local policy
+    -n, --permissive-security
+        Changes security mode to Permissive Security
+        Passing this option will explicitly recreate the LocalPolicy, only the options specified via this tool will exist in the output local policy
+    -m, --enable-mdm
+        Enables MDM management of software updates & kernel extensions
+        Automatically downgrades to Reduced Security mode if not already true
+    -k, --enable-kexts
+        Enables trust in locally SEP-signed AuxilaryKernelCache that contains 3rd party kexts
+        Automatically downgrades to Reduced Security mode if not already true
+    -c, --disable-kernel-ctrr
+        Disables the enforcement of the Configurable Text Read-only Region that protects Kernel code
+        Automatically downgrades to Permissive Security mode if not already true
+    -a, --disable-boot-args-restriction
+        Enables sending custom boot args to the kernel
+        Automatically downgrades to Permissive Security mode if not already true
+    -s, --disable-ssv
+        Disables Signed System Volume integrity checks
+        Automatically downgrades to Permissive Security mode if not already true
+        NOTE: SSV cannot be disabled while FileVault is enabled
 ```
