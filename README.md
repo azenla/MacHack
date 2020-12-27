@@ -23,6 +23,7 @@ A list of built-in tools in macOS that you probably didn't know about.
     - [AssetCacheLocatorUtil](#assetcachelocatorutil)
     - [AssetCacheManagerUtil](#assetcachemanagerutil)
     - [seedutil](#seedutil)
+    - [kmutil](#kmutil)
 
 ## Commands
 
@@ -1301,4 +1302,48 @@ CatalogURL: (null)
 NSShowFeedbackMenu: NO
 DisableSeedOptOut: NO
 Asset Audience: c80fd46d-7cc7-487e-993c-3876697879dc
+```
+
+### kmutil
+
+kmutil is a tool for managing Kernel Extensions.
+
+```text
+$ kmutil
+OVERVIEW: kmutil: KernelManagement Utility (KernelManagement_executables-102.60.20)
+
+USAGE: kmutil <subcommand>
+
+OPTIONS:
+  -h, --help              Show help information.
+
+SUBCOMMANDS:
+  create                  Create one or more new artifacts based on the arguments provided.
+  load                    Load one or more extensions based on the arguments provided.
+  unload                  Unload the named kexts and all personalities.
+  log                     Display logging information about the KernelManagement subsystem.
+  libraries               Search for library kexts that define symbols needed for linking by a a kernel extension.
+  dumpstate               Dumps kernelmanagerd(8) state for debugging
+  inspect                 Inspect & display a kext collection's contents according to the options provided.
+  clear-staging           Clears all contents of the kext staging locations on the system
+  find                    Find kexts available on the operating system.
+  showloaded              Show the loaded state of the extensions on the system, according to the options provided.
+  trigger-panic-medic     Delete and disable loading of third party kexts in order to safely boot into a target volume. (can only be triggered in Recovery mode)
+                          eg usage: `kmutil trigger-panic-medic --volume-root /Volumes/<VolumeName>`
+  check                   Check the consistency of kext collections against each other and/or load information in-kernel.
+  print-diagnostics       Perform all possible tests on a specified kext, and indicate whether the kext is loadable.
+
+  See 'kmutil help <subcommand>' for detailed help.
+```
+
+An example of using kmutil is to list loaded kexts:
+
+```text
+$ kmutil showloaded
+No variant specified, falling back to release
+Index Refs Address            Size       Wired      Name (Version) UUID <Linked Against>
+    1  139 0                  0          0          com.apple.kpi.bsd (20.2.0) 82E2050C-5936-3D24-AD3B-EC4EC5C09E11 <>
+    2   11 0                  0          0          com.apple.kpi.dsep (20.2.0) 82E2050C-5936-3D24-AD3B-EC4EC5C09E11 <>
+    3  168 0                  0          0          com.apple.kpi.iokit (20.2.0) 82E2050C-5936-3D24-AD3B-EC4EC5C09E11 <>
+    4    0 0                  0          0          com.apple.kpi.kasan (20.2.0) 82E2050C-5936-3D24-AD3B-EC4EC5C09E11 <>
 ```
