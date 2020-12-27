@@ -26,6 +26,9 @@ A list of built-in tools in macOS that you probably didn't know about.
     - [kmutil](#kmutil)
     - [profiles](#profiles)
     - [bputil](#bputil)
+    - [nscurl](#nscurl)
+    - [taskinfo](#taskinfo)
+    - [taskpolicy](#taskpolicy)
 
 ## Commands
 
@@ -1453,4 +1456,185 @@ bputil v0.1.3 - a tool to modify boot policies
         Disables Signed System Volume integrity checks
         Automatically downgrades to Permissive Security mode if not already true
         NOTE: SSV cannot be disabled while FileVault is enabled
+```
+
+### nscurl
+
+nscurl is similar to curl but using macOS APIs.
+
+```text
+$ nscurl -h
+Usage: nscurl [options...] <URL>
+Options:
+   -h     --help                                 Display help message
+   -bg    --background                           Use the background transfer
+                                                 API to execute the request
+          --discretionary                        Marks the transfer as
+                                                 discretionary (only has an
+                                                 effect if --background is
+                                                 passed)
+   -D     --dump-header                    [ARG] Write the response headers to
+                                                 the specified file (pass '-'
+                                                 for stdout)
+   -o     --output                         [ARG] Write the response data to
+                                                 the specified file (pass '-'
+                                                 for stdout)
+   -i     --include                              Include response headers in
+                                                 output
+   -L     --location                             Instruct nscurl to follow
+                                                 redirects (this is the
+                                                 default behavior)
+          --ignore-location                      Instruct nscurl to ignore
+                                                 redirects
+   -H     --header                         [ARG] Specify an additional HTTP
+                                                 Header ("X-Header-Name:
+                                                 Value")
+   -A     --user-agent                     [ARG] Specify the User-Agent string
+   -u     --user                           [ARG] Specify a username and
+                                                 password <user:password>
+   -dl    --download                             Download the resource using a
+                                                 download task
+   -dir   --download-directory             [ARG] Download the resource into
+                                                 the specified directory
+   -T     --upload                         [ARG] Upload the specified file
+                                                 (with HTTP PUT request
+   -SU    --streamed                             Use a streamed upload instead
+                                                 of a file upload, when
+                                                 --upload is passed
+   -k     --insecure                             Disable cert checking when
+                                                 using TLS
+   -ld    --large-download                       Use 'large-download'
+                                                 properties
+          --bg-traffic-class                     Use SO_TC_BK traffic class
+   -m     --max-time                       [ARG] Timeout in seconds for the
+                                                 entire request
+          --window-delay                   [ARG] Conditional connection window
+                                                 delay for request
+          --window-duration                [ARG] Conditional connection window
+                                                 duration for request
+   -M     --method                         [ARG] Set the HTTP method for the
+                                                 request
+   -G     --get                                  Send a GET request
+   -I     --head                                 Send a HEAD request
+          --post                                 Send a POST request
+          --put                                  Send a PUT request
+   -r     --range                          [ARG] Specify a byte range
+          --no-expensive                         Disallow the use of expensive
+                                                 networks
+          --no-constrained                       Disallow the use of
+                                                 constrained networks
+          --start-timeout                  [ARG] Sets a timeout on starting
+                                                 the request (expressed in
+                                                 seconds from now)
+          --fast-connect-timeout                 Fail quickly if the server is
+                                                 unreachable
+          --payload-transmission-timeout   [ARG] Sets a timeout on payload
+                                                 transmission
+
+                                                 post-connection-establishment
+   -v     --verbose                              Verbose output
+          --ats-diagnostics                      Display ATS diagnostic
+                                                 information for URL
+          --fingerprint                          Display fingerprint of URL
+                                                 TLS configuration
+          --ats-tls-version                [ARG] Minimum TLS version used for
+                                                 ATS configuration. Allowed
+                                                 values: TLSv1.0, TLSv1.1,
+                                                 TLSv1.2, or TLSv1.3
+          --ats-disable-pfs                      Do not require Perfect
+                                                 Forward Secrecy for ATS
+                                                 configuration
+   -ec    --effective-configuration              Exercise effective
+                                                 configuration
+          --effective-configuration-dump   [ARG] Write effective configuration
+                                                 to plist
+          --effective-configuration-read   [ARG] Read effective configuration
+                                                 from plist
+          --http3                                Enable HTTP/3
+          --http3-prior-knowledge                Enable HTTP/3 racing without
+                                                 service discovery
+```
+
+An example of using nscurl is fetching your external IP from ipify.org:
+
+```text
+$ nscurl 'https://api.ipify.org?format=json'
+{"ip":"10.25.0.1"}
+```
+
+### taskinfo
+
+taskinfo is a tool for viewing detailed information about a process.
+
+```text
+$ taskinfo -h
+usage:
+    taskinfo [-h|--help] [--threads] [--dq] [--boosts] [process-name|pid]
+```
+
+An example of using taskinfo is fetching information about the taskinfo process itself.
+
+```text
+$ sudo taskinfo taskinfo
+process: "taskinfo" [76355] [unique ID: 773167]
+architecture: arm64e
+coalition (type 0) ID: 30994
+coalition (type 1) ID: 30995
+suspend count: 0
+virtual bytes: 389.20 GB; phys_footprint bytes: 832.69 kB; phys_footprint lifetime maximum bytes: 832.69 kB
+run time: 0 s
+user/system time    (current threads): 0.000781 s / 0.011651 s
+user/system time (terminated threads): 0.000000 s / 0.000000 s
+interrupt wakeups: 0 (0 / nan% from platform idle)
+default sched policy: POLICY_TIMESHARE
+CPU usage monitor: none
+CPU wakes monitor: 150 wakes per second (over system-default time period)
+dirty tracking: untracked  dirty
+boosts: 0 (0 externalized)
+requested policy
+    req apptype: TASK_APPTYPE_DAEMON_INTERACTIVE
+    req role: TASK_UNSPECIFIED (PRIO_DARWIN_ROLE_DEFAULT)
+    req qos clamp: THREAD_QOS_UNSPECIFIED
+    req base/override latency qos: LATENCY_QOS_TIER_UNSPECIFIED / LATENCY_QOS_TIER_UNSPECIFIED
+    req base/override thruput qos: THROUGHPUT_QOS_TIER_UNSPECIFIED / THROUGHPUT_QOS_TIER_UNSPECIFIED
+    req darwin BG: NO
+    req internal/external iotier: THROTTLE_LEVEL_TIER0 (IMPORTANT) / THROTTLE_LEVEL_TIER0 (IMPORTANT)
+    req darwin BG iotier: THROTTLE_LEVEL_TIER2 (UTILITY)
+    req managed: NO
+    req other:
+    req suppression (App Nap) behaviors:
+effective policy
+    eff role: TASK_UNSPECIFIED (PRIO_DARWIN_ROLE_DEFAULT)
+    eff latency qos: LATENCY_QOS_TIER_UNSPECIFIED
+    eff thruput qos: THROUGHPUT_QOS_TIER_UNSPECIFIED
+    eff darwin BG: NO
+    eff iotier: THROTTLE_LEVEL_TIER0 (IMPORTANT)
+    eff managed: NO
+    eff qos ceiling: THREAD_QOS_USER_INITIATED
+    eff qos clamp: THREAD_QOS_UNSPECIFIED
+    eff other:
+imp_donor: YES
+imp_receiver: NO
+pid suspended: NO
+adaptive daemon: NO (boosted: NO)
+```
+
+### taskpolicy
+
+taskpolicy can be used to adjust certain policies for running programs, and can additionally be used for running programs with a particular policy.
+
+```$text
+$ taskpolicy
+Usage: taskpolicy [-x|-X] [-d <policy>] [-g policy] [-c clamp] [-b] [-t <tier>]
+                  [-l <tier>] [-a] <program> [<pargs> [...]]
+       taskpolicy [-b|-B] [-t <tier>] [-l <tier>] -p pid
+```
+
+An example of using taskpolicy is clamping a command to a particular task QoS:
+
+```text
+$ taskpolicy -c background sw_vers
+ProductName:    macOS
+ProductVersion: 11.0
+BuildVersion:   20A2411
 ```
