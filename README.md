@@ -24,6 +24,7 @@ A list of built-in tools in macOS that you probably didn't know about.
     - [AssetCacheManagerUtil](#assetcachemanagerutil)
     - [seedutil](#seedutil)
     - [kmutil](#kmutil)
+    - [profiles][#]
 
 ## Commands
 
@@ -1346,4 +1347,48 @@ Index Refs Address            Size       Wired      Name (Version) UUID <Linked 
     2   11 0                  0          0          com.apple.kpi.dsep (20.2.0) 82E2050C-5936-3D24-AD3B-EC4EC5C09E11 <>
     3  168 0                  0          0          com.apple.kpi.iokit (20.2.0) 82E2050C-5936-3D24-AD3B-EC4EC5C09E11 <>
     4    0 0                  0          0          com.apple.kpi.kasan (20.2.0) 82E2050C-5936-3D24-AD3B-EC4EC5C09E11 <>
+```
+
+### profiles
+
+profiles allows you to manage and inspect macOS profiles. This is most commonly used for MDM.
+
+```text
+$ profiles help
+profiles allows you access configuration or application provisioning profiles on macOS.
+    Use 'profiles help' for this help section, or use the man page for expanded instructions.
+    Basic usage is in the form:  'profiles <command verb> [<options and parameters>]'
+
+    Clients should use the Profiles System Preferences pane to install configuration profiles.
+
+    Command Verbs:
+                    status - indicates if profiles are installed
+                    list - list profile information
+                    show - show expanded profile information
+                    remove - remove profile
+                    sync - synchronize installed configuration profiles with known users
+                    renew - renew configuration profile installed certificate
+                    validate - validation of provisioning profile or DEP server enrollment information
+                    version - display tool version number
+
+    Options:    (not all options are meaningful for a command)
+                    -type=<string> - type of profile; either 'configuration', 'provisioning', 'enrollment', or 'bootstraptoken'
+                    -user=<string> - short user name
+                    -password=<string> - password
+                    -identifier=<string> - profile identifier
+                    -path=<string> - file path
+                    -uuid=<string> - profile UUID
+                    -enrolledUser=<string> - enrolled user name
+                    -verbose - enable verbose mode
+                    -forced - when removing profiles, automatically confirms requests
+                    -all - select all profiles
+                    -quiet - enable quiet mode
+```
+
+An example usage of profiles is viewing the status of profile enrollment:
+
+```text
+$ profiles status -type enrollment
+Enrolled via DEP: No
+MDM enrollment: No
 ```
