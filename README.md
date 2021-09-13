@@ -30,6 +30,7 @@ A list of built-in tools in macOS that you probably didn't know about.
     - [taskinfo](#taskinfo)
     - [taskpolicy](#taskpolicy)
     - [asr](#asr)
+    - [shortcuts](#shortcuts)
 
 ## Commands
 
@@ -1623,3 +1624,34 @@ Usage: asr <verb> <options>
 ```
 
 There is a [great WWDC talk](https://developer.apple.com/videos/play/wwdc2019/710/) which dives into ASR around the eleven minute mark.
+
+### shortcuts
+
+shortcuts allows you to run and list your shortcuts from the Shortcuts app.
+
+```text
+$ /usr/bin/shortcuts
+OVERVIEW: Command-line utility for running shortcuts.
+
+USAGE: shortcuts <subcommand>
+
+OPTIONS:
+  -h, --help              Show help information.
+
+SUBCOMMANDS:
+  run                     Run a shortcut.
+  list                    List your shortcuts.
+  view                    View a shortcut in Shortcuts.
+  sign                    Sign a shortcut file.
+
+  See 'shortcuts help <subcommand>' for detailed help.
+```
+
+An example of using shortcuts is the list command to list your shortcuts:
+
+```text
+$ /usr/bin/shortcuts list
+Accessibility Assistant
+Show me my Doorbell Camera
+Show me my Front Camera
+```
