@@ -31,6 +31,7 @@ A list of built-in tools in macOS that you probably didn't know about.
     - [taskpolicy](#taskpolicy)
     - [asr](#asr)
     - [shortcuts](#shortcuts)
+    - [networkQuality](#networkquality)
 
 ## Commands
 
@@ -1654,4 +1655,31 @@ $ /usr/bin/shortcuts list
 Accessibility Assistant
 Show me my Doorbell Camera
 Show me my Front Camera
+```
+
+### networkQuality
+
+networkQuality measures the quality of the network you are connected to.
+
+```text
+$ /usr/bin/networkQuality -h
+USAGE: networkQuality [-C <configuration_url>] [-c] [-h] [-I <interfaceName>] [-s] [-v]
+    -C: override Configuration URL
+    -c: Produce computer-readable output
+    -h: Show help (this message)
+    -I: Bind test to interface (e.g., en0, pdp_ip0,...)
+    -s: Run tests sequentially instead of parallel upload/download
+    -v: Verbose output
+```
+
+Running without any arguments will give you an assessment of your network.
+
+```text
+$ /usr/bin/networkQuality
+==== SUMMARY ====
+Upload capacity: 24.494 Mbps
+Download capacity: 262.640 Mbps
+Upload flows: 16
+Download flows: 12
+Responsiveness: Medium (677 RPM)
 ```
